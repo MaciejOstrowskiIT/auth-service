@@ -6,7 +6,7 @@ import { Serializer } from './Serializer';
 export class MongoAuthSerializer implements Serializer<UserDb, User> {
 
   mapToEntity(document: UserDb): User {
-    return new User(document._id, document.email, document.username, document.password);
+    return new User(document._id, document.email, document.username, document.password, document.accountId, document.status);
   }
 
   mapToDb(entity: User): UserDb {
