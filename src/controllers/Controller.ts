@@ -13,7 +13,7 @@ export class Controller {
 
     try {
       const emailExist = await this.service.fetchByEmail(email);
-      console.log( emailExist);
+      console.log(emailExist);
       if (emailExist) {
         res.status(400).json({ status: '400', message: 'Email already exists!' });
         return;
@@ -57,6 +57,6 @@ export class Controller {
   };
 
   private generateToken(user: UserDomain): string {
-    return jwt.sign({id: user.getId()}, process.env.TOKEN!);
+    return jwt.sign({ id: user.getId() }, process.env.TOKEN!);
   }
 }
