@@ -7,6 +7,7 @@ import { AuthService } from './services/AuthService';
 import { MongoMapper } from './mappers/MongoMapper';
 import { MongoAuthSerializer } from './mappers/MongoAuthSerializer';
 import { registerRoutes } from './utils/registerRoutes';
+import { AMQP, Exchange } from './amqp/config';
 
 const app = express();
 app.use(express.json());
@@ -16,6 +17,10 @@ app.use(cors({ origin: '*' }));
   try {
     const mongoClient = await new MongoClient(process.env.MONGO_URL!).connect();
     const database = mongoClient.db(process.env.DATABASE_NAME!);
+    const exchanges: Exchange[] = [{ name: 'transactions', queues: ['create-transactions'] }];
+    const amqp = new AMQP(exchanges);
+    await amqp.config();
+
     app.listen(process.env.PORT);
     logger('info', 'Auth Microservice is working fine at port ' + process.env.PORT);
 
@@ -25,8 +30,8 @@ app.use(cors({ origin: '*' }));
     );
     const controller = new Controller(service);
 
-
-    registerRoutes(app, controller)
+    amqp.consume();
+    registerRoutes(app, controller);
   } catch (err) {
     console.log('App crashed due to an error:  ' + err);
   }
