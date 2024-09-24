@@ -6,25 +6,18 @@ import { v4 as uuidv4 } from 'uuid';
 export class AuthService {
   constructor(private users: DataMapper<User>) {}
 
-  async create(request: Omit<UserType, 'id'>) {
-    const user = new User(
-      uuidv4(),
-      request.email,
-      request.password,
-      request.username,
-      request.accountId,
-      request.status
-    );
+  async create(request: Omit<UserType, 'id' | 'accountId'>) {
+    const user = new User(uuidv4(), request.email, request.username, request.password, null, request.status);
     await this.users.insert(user);
   }
 
   async fetch(id: string) {
-    console.log(id)
+    console.log(id);
     return await this.users.fetch(id);
   }
 
   async fetchByEmail(email: string) {
-    return await this.users.fetchByEmail(email)
+    return await this.users.fetchByEmail(email);
   }
 
   // async getUserData(id: string) {

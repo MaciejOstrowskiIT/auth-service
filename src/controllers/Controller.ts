@@ -10,10 +10,8 @@ export class Controller {
 
   public register = async (req: Request, res: Response): Promise<void> => {
     const { email, password, username } = req.body;
-
     try {
       const emailExist = await this.service.fetchByEmail(email);
-      console.log(emailExist);
       if (emailExist) {
         res.status(400).json({ status: '400', message: 'Email already exists!' });
         return;
@@ -21,10 +19,9 @@ export class Controller {
 
       const hashedPassword = await bcrypt.hash(password, 10);
       await this.service.create({
-        accountId: null,
         email,
-        password: hashedPassword,
         username,
+        password: hashedPassword,
         status: 'PENDING',
       });
 
